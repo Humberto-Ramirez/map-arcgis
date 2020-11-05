@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, Output, EventEmitter, ElementRef, ViewChild, Input} from '@angular/core';
 
 import {loadModules} from 'esri-loader';
-
+import {mxShape} from './shapes/mx_shape';
 
 import esri = __esri; // Esri TypeScript Types
 
@@ -65,15 +65,46 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   async initializeMap() {
     try {
 // Load the modules for the ArcGIS API for JavaScript
-      const [EsriMap, EsriMapView] = await loadModules([
+      const [EsriMap, EsriMapView, Graphic, GraphicsLayer] = await loadModules([
         'esri/Map',
-        'esri/views/MapView'
+        'esri/views/MapView',
+        'esri/Graphic',
+        'esri/layers/GraphicsLayer'
       ]);
+
+      const mxShapeP = {
+        type: 'polygon',
+        rings: mxShape
+      };
+
+      const simpleFillSymbol = {
+        type: 'simple-fill',
+        color: [27, 176, 223, 0.2], // orange, opacity 80%
+        outline: {
+          color: [255, 255, 255],
+          width: 1
+        }
+      };
+      // // polygon for México
+      //     let polygonMxGraphic = new Graphic({
+      //         geometry: polygon_mx,
+      //         symbol: simpleFillSymbol
+      //     });
+      const polygonMxGraphic = new Graphic({
+        geometry: mxShapeP,
+        symbol: simpleFillSymbol
+      });
+
+      const graphicsLayer = new GraphicsLayer();
+      graphicsLayer.add(polygonMxGraphic);
+
       // Configure the Map
       const mapProperties: esri.MapProperties = {
         basemap: this._basemap
       };
       const map: esri.Map = new EsriMap(mapProperties);
+      // map.add(graphicsLayer);
+      map.add(graphicsLayer);
 
       // Initialize the MapView
       const mapViewProperties: esri.MapViewProperties = {
