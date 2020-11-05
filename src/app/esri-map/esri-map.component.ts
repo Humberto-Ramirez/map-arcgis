@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit, Output, EventEmitter, ElementRef, ViewChil
 
 import {loadModules} from 'esri-loader';
 import {mxShape} from './shapes/mx_shape';
-
 import esri = __esri; // Esri TypeScript Types
 
 @Component({
@@ -65,17 +64,60 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   async initializeMap() {
     try {
 // Load the modules for the ArcGIS API for JavaScript
-      const [EsriMap, EsriMapView, Graphic, GraphicsLayer] = await loadModules([
+      const [EsriMap, EsriMapView, Graphic, GraphicsLayer, Viewpoint, Bookmark, Bookmarks, Expand] = await loadModules([
         'esri/Map',
         'esri/views/MapView',
         'esri/Graphic',
-        'esri/layers/GraphicsLayer'
+        'esri/layers/GraphicsLayer',
+        'esri/Viewpoint',
+        'esri/webmap/Bookmark',
+        'esri/widgets/Bookmarks',
+        'esri/widgets/Expand'
       ]);
 
       const mxShapeP = {
         type: 'polygon',
         rings: mxShape
       };
+
+      const mxBM = new Bookmark({
+        name: 'México',
+        extent: {
+          xmax: -49380296.044373505,
+          xmin: -53421063.10763999,
+          ymax: 3544598.359519775,
+          ymin: 1930248.322137282,
+          spatialReference: {
+            wkid: 102100
+          }
+        }
+      });
+
+      const chiapasBM = new Bookmark({
+        name: 'Chiapas',
+        extent: {
+          xmax: -10045128.360041605,
+          xmin: -10550224.242949916,
+          ymax: 2045105.9155128468,
+          ymin: 1722847.4042626293,
+          spatialReference: {
+            wkid: 102100
+          }
+        }
+      });
+
+      const comitanBM = new Bookmark({
+        name: 'Comitán',
+        extent: {
+          xmax: -50322702.79662613,
+          xmin: -50338487.042967,
+          ymax: 1837662.9265893954,
+          ymin: 1830019.223760888,
+          spatialReference: {
+            wkid: 102100
+          }
+        }
+      });
 
       const simpleFillSymbol = {
         type: 'simple-fill',
@@ -85,11 +127,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
           width: 1
         }
       };
-      // // polygon for México
-      //     let polygonMxGraphic = new Graphic({
-      //         geometry: polygon_mx,
-      //         symbol: simpleFillSymbol
-      //     });
+
       const polygonMxGraphic = new Graphic({
         geometry: mxShapeP,
         symbol: simpleFillSymbol
@@ -115,6 +153,33 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       };
 
       this._view = new EsriMapView(mapViewProperties);
+
+      const bm = new Bookmarks({
+        view: this._view,
+        editingEnabled: false,
+        // whenever a new bookmark is created, a 100x100 px
+        // screenshot of the view will be taken and the rotation, scale, and extent
+        // of the view will not be set as the viewpoint of the new bookmark
+        bookmarkCreationOptions: {
+          takeScreenshot: true,
+          captureViewpoint: true,
+          screenshotSettings: {
+            width: 100,
+            height: 100
+          }
+        },
+        bookmarks: [mxBM, chiapasBM, comitanBM]
+      });
+
+      const bkExpand = new Expand({
+        view: this._view,
+        content: bm,
+        expanded: true
+      });
+
+      this._view.ui.add(bkExpand, 'top-right');
+
+
       await this._view.when();
       return this._view;
     } catch (error) {

@@ -8,9 +8,9 @@ import {Component} from '@angular/core';
 export class AppComponent {
   title = 'arcgis-comitan-map';
   // Set our map properties
-  mapCenter = [-92.133333, 16.25];
+  mapCenter = [-102.01904296874999, 23.725011735951796];
   basemapType = 'gray-vector';
-  mapZoomLevel = 12;
+  mapZoomLevel = 4;
 
   mapLoadedEvent(status: boolean): void {
     console.log('the map loaded: ' + status);

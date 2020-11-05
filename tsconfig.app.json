@@ -5,7 +5,9 @@
     "outDir": "./out-tsc/app",
     "types": [
       "arcgis-js-api"
-    ]
+    ],
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "files": [
     "src/main.ts",
