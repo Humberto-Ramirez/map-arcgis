@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit, Output, EventEmitter, ElementRef, ViewChil
 
 import {loadModules} from 'esri-loader';
 import {mxShape} from './shapes/mx_shape';
+import {comitanShape} from './shapes/comitan_shape';
 import esri = __esri; // Esri TypeScript Types
 
 @Component({
@@ -80,6 +81,11 @@ export class EsriMapComponent implements OnInit, OnDestroy {
         rings: mxShape
       };
 
+      const comitanShapeP = {
+        type: 'polygon',
+        rings: comitanShape
+      };
+
       const mxBM = new Bookmark({
         name: 'México',
         extent: {
@@ -128,13 +134,27 @@ export class EsriMapComponent implements OnInit, OnDestroy {
         }
       };
 
+      const simpleFillTSymbol = {
+        type: 'simple-fill',
+        color: [27, 176, 223, 0.4], // orange, opacity 80%
+        outline: {
+          color: [255, 255, 255],
+          width: 1
+        }
+      };
+
       const polygonMxGraphic = new Graphic({
         geometry: mxShapeP,
         symbol: simpleFillSymbol
       });
+      const comitanGraphic = new Graphic({
+        geometry: comitanShapeP,
+        symbol: simpleFillTSymbol
+      });
 
       const graphicsLayer = new GraphicsLayer();
       graphicsLayer.add(polygonMxGraphic);
+      graphicsLayer.add(comitanGraphic);
 
       // Configure the Map
       const mapProperties: esri.MapProperties = {
