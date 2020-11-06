@@ -1,9 +1,11 @@
-import {Component, OnDestroy, OnInit, Output, EventEmitter, ElementRef, ViewChild, Input} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 
 import {loadModules} from 'esri-loader';
 import {mxShape} from './shapes/mx_shape';
 import {comitanShape} from './shapes/comitan_shape';
-import esri = __esri; // Esri TypeScript Types
+import {colorsShapes} from './colors_shapes';
+import {urbanShapes} from './shapes/urban_shapes';
+import esri = __esri;
 
 @Component({
   selector: 'app-esri-map',
@@ -77,13 +79,13 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       ]);
 
       const mxShapeP = {
-        type: 'polygon',
-        rings: mxShape
+        type: 'polyline',
+        paths: mxShape
       };
 
       const comitanShapeP = {
-        type: 'polygon',
-        rings: comitanShape
+        type: 'polyline',
+        paths: comitanShape
       };
 
       const mxBM = new Bookmark({
@@ -127,19 +129,9 @@ export class EsriMapComponent implements OnInit, OnDestroy {
 
       const simpleFillSymbol = {
         type: 'simple-fill',
-        color: [27, 176, 223, 0.2], // orange, opacity 80%
         outline: {
-          color: [255, 255, 255],
-          width: 1
-        }
-      };
-
-      const simpleFillTSymbol = {
-        type: 'simple-fill',
-        color: [27, 176, 223, 0.4], // orange, opacity 80%
-        outline: {
-          color: [255, 255, 255],
-          width: 1
+          color: [27, 176, 223],
+          width: 2
         }
       };
 
@@ -147,14 +139,43 @@ export class EsriMapComponent implements OnInit, OnDestroy {
         geometry: mxShapeP,
         symbol: simpleFillSymbol
       });
+
       const comitanGraphic = new Graphic({
         geometry: comitanShapeP,
-        symbol: simpleFillTSymbol
+        symbol: {
+          type: 'simple-fill',
+          outline: {
+            color: [122, 114, 101],
+            width: 2
+          }
+        }
       });
 
       const graphicsLayer = new GraphicsLayer();
       graphicsLayer.add(polygonMxGraphic);
       graphicsLayer.add(comitanGraphic);
+      addGraphics();
+
+      function addGraphics(): void {
+        urbanShapes.forEach(shape => {
+          const gp = new Graphic({
+            geometry: shape,
+            symbol: getSymbol()
+          });
+          graphicsLayer.add(gp);
+        });
+      }
+
+      function getSymbol(): any {
+        const randomValue = colorsShapes[Math.floor(Math.random() * colorsShapes.length)];
+        return {
+          type: 'simple-fill',
+          outline: {
+            color: randomValue,
+            width: 2
+          }
+        };
+      }
 
       // Configure the Map
       const mapProperties: esri.MapProperties = {
