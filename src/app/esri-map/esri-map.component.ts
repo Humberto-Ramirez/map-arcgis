@@ -134,7 +134,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
         type: 'simple-fill',
         outline: {
           color: [27, 176, 223],
-          width: 2
+          width: 1
         }
       };
 
@@ -149,7 +149,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
           type: 'simple-fill',
           outline: {
             color: [122, 114, 101],
-            width: 2
+            width: 1
           }
         }
       });
@@ -234,7 +234,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
           type: 'simple-fill',
           outline: {
             color: randomValue,
-            width: 2
+            width: 1
           }
         };
       }
