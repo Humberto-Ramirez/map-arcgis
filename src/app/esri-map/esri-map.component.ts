@@ -5,6 +5,7 @@ import {mxShape} from './shapes/mx_shape';
 import {comitanShape} from './shapes/comitan_shape';
 import {colorsShapes} from './colors_shapes';
 import {urbanShapes} from './shapes/urban_shapes';
+import {ruralShapes} from './shapes/rural_shapes';
 import esri = __esri;
 
 @Component({
@@ -158,6 +159,13 @@ export class EsriMapComponent implements OnInit, OnDestroy {
 
       function addGraphics(): void {
         urbanShapes.forEach(shape => {
+          const gp = new Graphic({
+            geometry: shape,
+            symbol: getSymbol()
+          });
+          graphicsLayer.add(gp);
+        });
+        ruralShapes.forEach(shape => {
           const gp = new Graphic({
             geometry: shape,
             symbol: getSymbol()
