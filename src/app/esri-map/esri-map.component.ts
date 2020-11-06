@@ -7,6 +7,7 @@ import {colorsShapes} from './colors_shapes';
 import {urbanShapes} from './shapes/urban_shapes';
 import {ruralShapes} from './shapes/rural_shapes';
 import {urbanPoints} from './shapes/urban_points';
+import {ruralPoints} from './shapes/rural_points';
 import esri = __esri;
 
 @Component({
@@ -178,6 +179,30 @@ export class EsriMapComponent implements OnInit, OnDestroy {
 
       function addPoints(): void {
         urbanPoints.forEach(po => {
+          // Add text below the pin
+          const textGraphic = new Graphic({
+            geometry: {
+              type: 'point',
+              longitude: po.point[0],
+              latitude: po.point[1]
+            },
+            symbol: {
+              type: 'text',
+              color: [25, 25, 25],
+              haloColor: [255, 255, 255],
+              haloSize: '1px',
+              text: po.name,
+              xoffset: 0,
+              yoffset: -5,
+              font: {
+                size: 10
+              }
+            }
+          });
+          graphicsLayer.add(textGraphic);
+        });
+
+        ruralPoints.forEach(po => {
           // Add text below the pin
           const textGraphic = new Graphic({
             geometry: {
