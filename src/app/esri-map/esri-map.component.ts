@@ -133,7 +133,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       const simpleFillSymbol = {
         type: 'simple-fill',
         outline: {
-          color: [27, 176, 223],
+          color: [25, 25, 25],// [27, 176, 223],
           width: 1
         }
       };
@@ -148,7 +148,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
         symbol: {
           type: 'simple-fill',
           outline: {
-            color: [122, 114, 101],
+            color: [25, 25, 25], // [122, 114, 101],
             width: 1
           }
         }
@@ -233,7 +233,8 @@ export class EsriMapComponent implements OnInit, OnDestroy {
         return {
           type: 'simple-fill',
           outline: {
-            color: randomValue,
+            // color: randomValue,
+            color: [25, 25, 25],
             width: 1
           }
         };
@@ -256,6 +257,28 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       };
 
       this._view = new EsriMapView(mapViewProperties);
+
+      this._view.on('click', event => {
+        this._view.hitTest(event, {}).then(response => {
+          if (response.results.length) {
+            // console.log('response.results', response.results);
+            response.results.forEach(p => {
+              if (p.graphic.symbol != null) {
+                // console.log('is a symbol', p.mapPoint.toJSON());
+                if (p.graphic.symbol.get('text').toString().includes('secc_')) {
+                  // console.log('is a secc:', p.graphic.symbol.get('text'));
+                  this._center = [event.mapPoint.longitude, event.mapPoint.latitude];
+                  this._zoom = 13;
+                  this._view.center = event.mapPoint;
+                  this._view.zoom = this._zoom;
+                  // this._view.extent=
+                }
+
+              }
+            });
+          }
+        });
+      });
 
       const bm = new Bookmarks({
         view: this._view,
@@ -281,7 +304,6 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       });
 
       this._view.ui.add(bkExpand, 'top-right');
-
 
       await this._view.when();
       return this._view;
